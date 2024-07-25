@@ -1,5 +1,5 @@
 import os
-import wandb
+# import wandb
 from detectron2.utils import comm
 from detectron2.utils.events import EventWriter, get_event_storage
 

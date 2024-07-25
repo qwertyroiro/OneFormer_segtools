@@ -224,7 +224,7 @@ class _PanopticPrediction:
         assert (
             len(empty_ids) == 1
         ), ">1 ids corresponds to no labels. This is currently not supported"
-        return (self._seg != empty_ids[0]).numpy().astype(np.bool)
+        return (self._seg != empty_ids[0]).numpy().astype(bool)
 
     def semantic_masks(self):
         for sid in self._seg_ids:
@@ -232,14 +232,14 @@ class _PanopticPrediction:
             if sinfo is None or sinfo["isthing"]:
                 # Some pixels (e.g. id 0 in PanopticFPN) have no instance or semantic predictions.
                 continue
-            yield (self._seg == sid).numpy().astype(np.bool), sinfo
+            yield (self._seg == sid).numpy().astype(bool), sinfo
 
     def instance_masks(self):
         for sid in self._seg_ids:
             sinfo = self._sinfo.get(sid)
             if sinfo is None or not sinfo["isthing"]:
                 continue
-            mask = (self._seg == sid).numpy().astype(np.bool)
+            mask = (self._seg == sid).numpy().astype(bool)
             if mask.sum() > 0:
                 yield mask, sinfo
 
@@ -607,7 +607,7 @@ class Visualizer:
         # draw mask for all instances second
         all_instances = list(pred.instance_masks())
         if len(all_instances) == 0:
-            return self.output
+            return self.output, None
         masks, sinfo = list(zip(*all_instances))
         category_ids = [x["category_id"] for x in sinfo]
 
@@ -966,6 +966,7 @@ class Visualizer:
             font_size = self._default_font_size
 
         # since the text background is dark, we don't want the text to be dark
+        color = np.minimum(color, 1)
         color = np.maximum(list(mplc.to_rgb(color)), 0.2)
         color[np.argmax(color)] = max(0.8, np.max(color))
 
