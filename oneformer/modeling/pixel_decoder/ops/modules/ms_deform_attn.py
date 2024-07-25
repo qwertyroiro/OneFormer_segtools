@@ -22,7 +22,8 @@ import torch.nn.functional as F
 from torch.nn.init import xavier_uniform_, constant_
 
 if torch.cuda.is_available():
-    from ..functions import MSDeformAttnFunction
+    # from ..functions import MSDeformAttnFunction
+    MSDeformAttnFunction = None
 else:
     MSDeformAttnFunction = None
 from ..functions.ms_deform_attn_func import ms_deform_attn_core_pytorch
